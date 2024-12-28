@@ -1,7 +1,7 @@
 .PHONY: install build dev docker-build docker-up docker-down prisma-generate prisma-migrate
 
 install:
-	npm install
+	docker-compose exec api npm install
 
 build:
 	npm run build
@@ -10,10 +10,10 @@ dev:
 	npm run start:dev
 
 docker-build:
-	docker-compose build --no-cache
+	docker-compose build
 
 docker-up:
-	docker-compose up -d
+	docker-compose up
 
 docker-down:
 	docker-compose down
