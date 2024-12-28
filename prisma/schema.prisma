@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum OrderStatus {
+  REVIEW      // Initial state when order is created
+  PROCESSING  // After chat is closed by admin
+  COMPLETED   // Final state set by admin
+}
+
+enum ChatRoomStatus {
+  OPEN
+  CLOSED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // Hashed password
+  role      UserRole
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders        Order[]    // Orders created by the user
+  messages      Message[]  // Messages sent by the user
+  chatRooms    ChatRoom[] @relation("AdminChatRooms") // Chat rooms where user is admin
+  createdChats ChatRoom[] @relation("CreatedByUser")  // Chat rooms created by user
+}
+
+model Order {
+  id             String      @id @default(uuid())
+  description    String
+  specifications Json        // Flexible JSON field for specifications
+  quantity       Int
+  metadata       Json?       // Optional metadata
+  status         OrderStatus @default(REVIEW)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  // Relations
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  chatRoom  ChatRoom?
+
+  @@index([userId])
+}
+
+model ChatRoom {
+  id              String         @id @default(uuid())
+  status          ChatRoomStatus @default(OPEN)
+  closingSummary  String?        // Required when admin closes the chat
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  orderId    String   @unique    // One-to-one with Order
+  order      Order    @relation(fields: [orderId], references: [id])
+  messages   Message[]
+  adminId    String              // Admin assigned to chat
+  admin      User      @relation("AdminChatRooms", fields: [adminId], references: [id])
+  userId     String              // User who created the order
+  user       User      @relation("CreatedByUser", fields: [userId], references: [id])
+
+  @@index([adminId])
+  @@index([userId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  chatRoomId String
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+
+  @@index([userId])
+  @@index([chatRoomId])
+}

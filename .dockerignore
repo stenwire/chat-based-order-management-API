@@ -1,0 +1,60 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Source control
+.git
+.gitignore
+.gitattributes
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Development files
+*.md
+.editorconfig
+.prettierrc
+.eslintrc
+.eslintignore
+jest.config.js
+test
+tests
+__tests__
+coverage
+.vscode
+.idea
+*.log
+
+# Build output
+dist
+build
+*.tsbuildinfo
+
+# Docker files
+Dockerfile*
+docker-compose*
+.docker
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp files
+tmp
+temp
+*.tmp
+*.temp
+
+# Prisma
+prisma/*.db
+prisma/migrations
+
+# Misc
+.husky
+.github
+*.zip
+*.tar.gz
