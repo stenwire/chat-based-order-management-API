@@ -1,4 +1,13 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"],
+  "watchOptions": {
+    // Stackoverflow: https://stackoverflow.com/questions/75318862/nestjs-doesnt-hot-reload-work-in-inside-docker/75789242#75789242
+    "watchFile": "dynamicPriorityPolling",
+    "watchDirectory": "dynamicPriorityPolling",
+    "excludeDirectories": [
+      "**/node_modules",
+      "dist"
+    ]
+  }
 }

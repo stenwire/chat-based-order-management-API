@@ -21,6 +21,9 @@ docker-down:
 prisma-migrate:
 	docker-compose exec api npx prisma migrate dev
 
+prisma-generate:
+	docker-compose exec api npx prisma generate
+
 prisma-migrate-init:
 	docker-compose exec api npx prisma migrate dev --name "init"
 
