@@ -9,6 +9,9 @@ build:
 dev:
 	npm run start:dev
 
+run-test:
+	docker-compose exec api npm test
+
 docker-build:
 	docker-compose build
 
@@ -20,6 +23,9 @@ docker-down:
 
 prisma-migrate:
 	docker-compose exec api npx prisma migrate dev
+
+prisma-generate:
+	docker-compose exec api npx prisma generate
 
 prisma-migrate-init:
 	docker-compose exec api npx prisma migrate dev --name "init"
