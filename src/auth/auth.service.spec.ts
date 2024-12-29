@@ -10,9 +10,12 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { v4 as uuid } from 'uuid';
 
-const id: string = uuid();
+import { UserRole } from '@prisma/client';
+
+// import { v4 as uuid } from 'uuid';
+
+const id = '1';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -65,10 +68,6 @@ describe('AuthService', () => {
   });
 
   describe('signUp', () => {
-    const UserRole = {
-      ADMIN: 'ADMIN',
-      USER: 'USER',
-    };
     const signUpDto = {
       email: 'test@example.com',
       password: 'password123',
