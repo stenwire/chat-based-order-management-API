@@ -9,6 +9,9 @@ build:
 dev:
 	npm run start:dev
 
+run-test:
+	docker-compose exec api npm test
+
 docker-build:
 	docker-compose build
 

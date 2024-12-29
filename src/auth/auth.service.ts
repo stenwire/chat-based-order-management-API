@@ -83,7 +83,6 @@ export class AuthService {
         role: true,
         createdAt: true,
         updatedAt: true,
-        refreshToken: true,
         // Add any other fields you want to expose
         // Exclude sensitive fields like password and refreshToken
       },
@@ -114,8 +113,6 @@ export class AuthService {
       refreshToken,
       user.refreshToken,
     );
-
-    console.log(`refreshTokenMatches: ${refreshTokenMatches}`);
 
     if (!refreshTokenMatches) {
       throw new UnauthorizedException('Access Denied');
