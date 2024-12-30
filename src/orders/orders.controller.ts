@@ -25,10 +25,8 @@ import {
 } from '@nestjs/swagger';
 import { OrderResponseDto } from './dto/order-response.dto';
 
-export const apiVersion = 'api/v1';
-
 @ApiTags('orders')
-@Controller(`${apiVersion}/orders`)
+@Controller(`orders`)
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class OrdersController {

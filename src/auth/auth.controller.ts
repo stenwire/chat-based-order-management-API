@@ -11,10 +11,8 @@ import { ApiTags, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
-const apiVersion = 'api/v1';
-
 @ApiTags('auth')
-@Controller(`${apiVersion}/auth`)
+@Controller(`auth`)
 export class AuthController {
   constructor(private authService: AuthService) {}
 
