@@ -1,4 +1,13 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateChatroomDto } from './create-chatroom.dto';
+import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
+import { ChatRoomStatus } from '@prisma/client';
 
-export class UpdateChatroomDto extends PartialType(CreateChatroomDto) {}
+export class UpdateChatRoomDto {
+  @IsOptional()
+  @IsEnum(ChatRoomStatus)
+  status?: ChatRoomStatus;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  closingSummary?: string;
+}
