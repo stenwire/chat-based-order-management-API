@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Test Client</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"></script>
+    <style>
+        /* ... (same styles as before) ... */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-container">
+            <h2>Connection Details</h2>
+            <div class="input-group">
+                <label for="userId">User ID:</label>
+                <input type="text" id="userId" placeholder="Enter your user ID">
+            </div>
+            <div class="input-group">
+                <label for="orderId">Order ID:</label>
+                <input type="text" id="orderId" placeholder="Enter order ID">
+            </div>
+            <button id="connectBtn">Connect</button>
+            <button id="disconnectBtn" disabled>Disconnect</button>
+            <div id="connectionStatus" class="status disconnected">
+                Disconnected
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <h2>Chat Room</h2>
+            <div id="messageContainer"></div>
+            
+            <form id="messageForm">
+                <div class="input-group">
+                    <textarea id="messageInput" placeholder="Type your message..." rows="3"></textarea>
+                </div>
+                <button type="submit" disabled>Send Message</button>
+            </form>
+
+            <form id="closeChatForm">
+                <h3>Close Chat</h3>
+                <div class="input-group">
+                    <textarea id="closingSummary" placeholder="Enter closing summary..." rows="3"></textarea>
+                </div>
+                <button type="submit">Close Chat</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let socket = null;
+        const messageContainer = document.getElementById('messageContainer');
+        const messageForm = document.getElementById('messageForm');
+        const messageInput = document.getElementById('messageInput');
+        const closeChatForm = document.getElementById('closeChatForm');
+        const closingSummary = document.getElementById('closingSummary');
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const sendMessageBtn = messageForm.querySelector('button');
+
+        // Update connection status UI
+        function updateConnectionStatus(connected) {
+            connectionStatus.textContent = connected ? 'Connected' : 'Disconnected';
+            connectionStatus.className = `status ${connected ? 'connected' : 'disconnected'}`;
+            connectBtn.disabled = connected;
+            disconnectBtn.disabled = !connected;
+            sendMessageBtn.disabled = !connected;
+            messageInput.disabled = !connected;
+        }
+
+        // Add message to the UI
+        function addMessage(message, isSystem = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isSystem ? 'system' : (message.userId === socket?.userId ? 'sent' : 'received')}`;
+            
+            const userName = document.createElement('div');
+            userName.className = 'user-name';
+            userName.textContent = isSystem ? 'System' : (message.user?.name || 'Unknown User');
+            
+            const content = document.createElement('div');
+            content.className = 'content';
+            content.textContent = isSystem ? message : message.content;
+            
+            const timestamp = document.createElement('div');
+            timestamp.className = 'timestamp';
+            timestamp.textContent = new Date(message.createdAt || Date.now()).toLocaleTimeString();
+            
+            messageDiv.appendChild(userName);
+            messageDiv.appendChild(content);
+            messageDiv.appendChild(timestamp);
+            
+            messageContainer.appendChild(messageDiv);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // Connect button handler
+        connectBtn.addEventListener('click', () => {
+            const userId = document.getElementById('userId').value;
+            const orderId = document.getElementById('orderId').value;
+            
+            if (!userId || !orderId) {
+                alert('Please enter both user ID and chat room ID');
+                return;
+            }
+
+            // Connect to WebSocket with query parameters
+            socket = io('http://localhost:3000', {
+                path: '/api/v1/chat',
+                query: {
+                    uid: userId,
+                    oid: orderId
+                }
+            });
+            
+
+            // Store userId for message display
+            socket.userId = userId;
+
+            // Connection event handlers
+            socket.on('connect', () => {
+                console.log('Connected to socket');
+                updateConnectionStatus(true);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Disconnected from socket');
+                updateConnectionStatus(false);
+            });
+
+            socket.on('error', (error) => {
+                console.error('Socket error:', error);
+                alert(error.message);
+                socket.disconnect();
+            });
+
+            socket.on('chatHistory', (messages) => {
+                messageContainer.innerHTML = '';
+                messages.forEach(message => addMessage(message));
+            });
+
+            socket.on('message', (message) => {
+                addMessage(message);
+            });
+
+            socket.on('chatClosed', (data) => {
+                addMessage(`Chat closed. Summary: ${data.closingSummary}`, true);
+                updateConnectionStatus(false);
+                socket.disconnect();
+            });
+        });
+
+        // Disconnect button handler
+        disconnectBtn.addEventListener('click', () => {
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+            }
+        });
+
+        // Message form handler
+        messageForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const content = messageInput.value.trim();
+            
+            if (!content) return;
+
+            socket.emit('message', content, (response) => {
+                if (!response.success) {
+                    console.error('Failed to send message:', response.error);
+                    alert('Failed to send message: ' + response.error);
+                }
+            });
+
+            messageInput.value = '';
+        });
+
+        // Close chat form handler
+        closeChatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const summary = closingSummary.value.trim();
+            
+            if (!summary) return;
+
+            socket.emit('closeChat', summary, (response) => {
+                if (!response.success) {
+                    console.error('Failed to close chat:', response.error);
+                    alert('Failed to close chat: ' + response.error);
+                }
+            });
+
+            closingSummary.value = '';
+        });
+    </script>
+</body>
+</html>
