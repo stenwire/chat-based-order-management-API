@@ -1,26 +1,172 @@
-import { Injectable } from '@nestjs/common';
-import { CreateChatroomDto } from './dto/create-chatroom.dto';
-import { UpdateChatroomDto } from './dto/update-chatroom.dto';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateChatRoomDto } from './dto/create-chatroom.dto';
+import { UpdateChatRoomDto } from './dto/update-chatroom.dto';
+import { ChatRoom, ChatRoomStatus } from '@prisma/client';
 
 @Injectable()
-export class ChatroomsService {
-  create(createChatroomDto: CreateChatroomDto) {
-    return 'This action adds a new chatroom';
+export class ChatRoomsService {
+  constructor(private prisma: PrismaService) {}
+
+  async create(createChatRoomDto: CreateChatRoomDto): Promise<ChatRoom> {
+    // Check if chat room already exists for the order
+    const existingChatRoom = await this.prisma.chatRoom.findUnique({
+      where: { orderId: createChatRoomDto.orderId },
+    });
+
+    if (existingChatRoom) {
+      throw new BadRequestException('Chat room already exists for this order');
+    }
+
+    return this.prisma.chatRoom.create({
+      data: {
+        order: { connect: { id: createChatRoomDto.orderId } },
+        admin: { connect: { id: createChatRoomDto.adminId } },
+        user: { connect: { id: createChatRoomDto.userId } },
+        status: ChatRoomStatus.OPEN,
+      },
+      include: {
+        order: true,
+        admin: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all chatrooms`;
+  async findAll(): Promise<ChatRoom[]> {
+    return this.prisma.chatRoom.findMany({
+      include: {
+        order: true,
+        messages: true,
+        admin: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chatroom`;
+  async findOne(id: string): Promise<ChatRoom | null> {
+    return this.prisma.chatRoom.findUnique({
+      where: { id },
+      include: {
+        order: true,
+        messages: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+        admin: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 
-  update(id: number, updateChatroomDto: UpdateChatroomDto) {
-    return `This action updates a #${id} chatroom`;
+  async findByOrderId(orderId: string): Promise<ChatRoom | null> {
+    return this.prisma.chatRoom.findUnique({
+      where: { orderId },
+      include: {
+        order: true,
+        messages: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+        admin: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} chatroom`;
+  async update(
+    id: string,
+    updateChatRoomDto: UpdateChatRoomDto,
+  ): Promise<ChatRoom> {
+    return this.prisma.chatRoom.update({
+      where: { id },
+      data: updateChatRoomDto,
+      include: {
+        order: true,
+        messages: true,
+        admin: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 }
