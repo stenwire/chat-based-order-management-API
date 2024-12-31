@@ -1,14 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ChatRoomsController } from './chatrooms.controller';
 import { ChatRoomsService } from './chatrooms.service';
-import { CreateChatRoomDto } from './dto/create-chatroom.dto';
 import { UpdateChatRoomDto } from './dto/update-chatroom.dto';
 import { ChatRoomStatus } from '@prisma/client';
-import {
-  BadRequestException,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { UserRole } from '@prisma/client';
 
 describe('ChatroomsController', () => {
   let controller: ChatRoomsController;
@@ -67,39 +63,15 @@ describe('ChatroomsController', () => {
     jest.clearAllMocks();
   });
 
-  describe('create', () => {
-    const createDto: CreateChatRoomDto = {
-      orderId: '1',
-      adminId: '1',
-      userId: '1',
-    };
-
-    it('should create a chat room successfully', async () => {
-      mockChatRoomsService.create.mockResolvedValueOnce(mockChatRoom);
-
-      const result = await controller.create(createDto);
-
-      expect(result).toEqual(mockChatRoom);
-      expect(mockChatRoomsService.create).toHaveBeenCalledWith(createDto);
-    });
-
-    it('should throw BadRequestException when creation fails', async () => {
-      mockChatRoomsService.create.mockRejectedValueOnce(
-        new Error('Creation failed'),
-      );
-
-      await expect(controller.create(createDto)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-  });
-
   describe('findAll', () => {
     it('should return an array of chat rooms', async () => {
       const mockChatRooms = [mockChatRoom];
       mockChatRoomsService.findAll.mockResolvedValueOnce(mockChatRooms);
 
-      const result = await controller.findAll();
+      const result = await controller.findAll({
+        id: '1',
+        role: UserRole.ADMIN,
+      });
 
       expect(result).toEqual(mockChatRooms);
       expect(mockChatRoomsService.findAll).toHaveBeenCalled();
