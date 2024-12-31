@@ -2,98 +2,116 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<p align="center">🧾</p>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+  <p align="center">A Chat and Order Management API management system</p>
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Requirement:
+- Node & NPM
+- Docker (optional)
+
+---
 
 ## Project setup
 
 ```bash
+$ git clone <repo_link>
+```
+```bash
+$ cd into directory
+```
+```bash
+$ copy the content of `.env.example` to a new file `.env`
+```
+
+### How to start the app with Docker(recommended):
+
+> #### Run the Make command below to build docker container and setup project:
+```bash
+$ make setup
+```
+```bash
+$ make docker-up
+```
+### How to start the app the native style(not recommended):
+> #### Create a Postgres DB and update the Database URL in the ev file
+```bash
 $ npm install
 ```
-
-## Compile and run the project
-
 ```bash
-# development
-$ npm run start
-
-# watch mode
 $ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Run tests
+> #### If you got everything right, you should be able to access the API docs here: http://localhost:3000/api/v1/docs
+
+> #### If you got everything right, you should be able to access the web socket here: http://localhost:3000/api/v1/chat
+
+### Interacting with the websocket:
+#### TODO:
+- Connection is ony available via SocketIo
+- Create an admin and a normal user account
+- Create an order, which automatically creates a chat room for communication
+- Obtain the Order Id and respective user ID
+
+#### Create two different sessions(admin and user) using your obtained order and user ID as shown below:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# User session:
+http://localhost:3000/api/v1/chat?uid=<user_id>&oid=<order_id>
 ```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
 ```bash
-$ npm install -g mau
-$ mau deploy
+# Admin session:
+http://localhost:3000/api/v1/chat?uid=<admin_id>&oid=<order_id>
 ```
+If you find it difficult accessing the socket chat sessions, I have provided an HTML file in the root directory named `chat.html` load the html file in your browser, load it again in an incognito window to isolate sessions, then enter in your respective IDs.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Screenshot of HTML file:
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+</p>
 
-## Resources
+> ### Run the Make commands below to run test:
+```bash
+$ make run-test # unit tests
+```
+```bash
+$ make run-e2e-test # e2e tests
+```
+> ⚠️ Find other Make commands in the Makefile located in the root directory
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Why did I use Docker and Makefile
+The combination of **Docker** and a **Makefile** is highly effective for local development because it simplifies and standardizes the development environment and workflows:
 
-## Support
+1. **Environment Consistency**:
+   - Docker ensures that the development environment is the same across all developers' machines by using containerized setups.
+   - This avoids "it works on my machine" problems caused by variations in local environments.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+2. **Simplified Commands**:
+   - A **Makefile** abstracts complex Docker commands into simple, easy-to-remember targets (e.g., `make build`, `make run`, `make test`).
+   - Developers don't need to memorize or type long Docker commands.
+
+3. **Automation**:
+   - The Makefile can automate repetitive tasks like building images, starting containers, running tests, or cleaning up resources.
+
+4. **Efficiency**:
+   - It reduces the learning curve for new developers by providing a clear set of instructions and standardized commands.
+   - Tasks are streamlined, improving productivity.
+
+5. **Integration**:
+   - Docker handles dependencies, services (like databases), and runtime environments.
+   - The Makefile ties these together, ensuring smooth integration during local development.
+
+By combining Docker for environment consistency and the Makefile for automation and simplicity, the combo creates a powerful and developer-friendly setup.
+
+## Useful links:
+- If you dont use Docker, you're missing out. Learn about docker here: [Docker Docs](https://www.linkedin.com/in/stephen-nwankwo-9876b4196/)
+- Learn about Makefile here: [Makefile Docs](https://www.linkedin.com/in/stephen-nwankwo-9876b4196/)
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- My LinkedIn - [LinkedIn](https://www.linkedin.com/in/stephen-nwankwo-9876b4196/)
 
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
