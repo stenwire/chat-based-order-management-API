@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ChatRoomsService } from './chatrooms.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BadRequestException } from '@nestjs/common';
-import { ChatRoomStatus } from '@prisma/client';
+import { ChatRoomStatus, UserRole } from '@prisma/client';
 
 describe('ChatroomsService', () => {
   let service: ChatRoomsService;
@@ -96,7 +96,7 @@ describe('ChatroomsService', () => {
       const mockChatRooms = [mockChatRoom];
       mockPrismaService.chatRoom.findMany.mockResolvedValueOnce(mockChatRooms);
 
-      const result = await service.findAll();
+      const result = await service.findAll('1', UserRole.ADMIN);
 
       expect(result).toEqual(mockChatRooms);
       expect(mockPrismaService.chatRoom.findMany).toHaveBeenCalled();

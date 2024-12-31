@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateChatRoomDto } from './dto/create-chatroom.dto';
 import { UpdateChatRoomDto } from './dto/update-chatroom.dto';
-import { ChatRoom, ChatRoomStatus } from '@prisma/client';
+import { ChatRoom, ChatRoomStatus, UserRole } from '@prisma/client';
 
 @Injectable()
 export class ChatRoomsService {
@@ -45,8 +45,11 @@ export class ChatRoomsService {
     });
   }
 
-  async findAll(): Promise<ChatRoom[]> {
+  async findAll(userId: string, userRole: UserRole): Promise<ChatRoom[]> {
+    const where = userRole === UserRole.ADMIN ? {} : { userId };
+
     return this.prisma.chatRoom.findMany({
+      where,
       include: {
         order: true,
         messages: true,

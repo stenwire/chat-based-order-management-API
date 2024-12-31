@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { OrderStatus, UserRole } from '@prisma/client';
+import { OrderStatus, UserRole, ChatRoomStatus } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
@@ -124,17 +124,17 @@ export class OrdersService {
 
     // Validate status transition
     if (
-      status === OrderStatus.PROCESSING &&
-      order.chatRoom?.status !== 'CLOSED'
+      status !== OrderStatus.PROCESSING ||
+      order.chatRoom?.status !== ChatRoomStatus.CLOSED
     ) {
       throw new ForbiddenException(
-        'Chat must be closed before moving to PROCESSING',
+        'Chat must be closed before moving to COMPLETED',
       );
     }
 
     return this.prisma.order.update({
       where: { id },
-      data: { status },
+      data: { status: OrderStatus.COMPLETED },
     });
   }
 

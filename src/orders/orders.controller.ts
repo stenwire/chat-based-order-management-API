@@ -52,6 +52,7 @@ export class OrdersController {
   @Get(':id')
   @ApiOperation({ summary: 'Get order by ID' })
   @ApiResponse({ status: HttpStatus.OK, type: OrderResponseDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Order not found' })
   async findOne(
     @Param('id') id: string,
     @GetCurrentUser() user: { id: string; role: UserRole },
@@ -62,6 +63,7 @@ export class OrdersController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update order by ID' })
   @ApiResponse({ status: HttpStatus.OK, type: OrderResponseDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Order not found' })
   async update(
     @Param('id') id: string,
     @Body() updateOrderDto: UpdateOrderDto,
@@ -72,7 +74,7 @@ export class OrdersController {
 
   @Patch(':id/status')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Update order status (Admin only)' })
+  @ApiOperation({ summary: 'Update order status to COMPLETED (Admin only)' })
   @ApiResponse({ status: HttpStatus.OK, type: OrderResponseDto })
   async updateStatus(
     @Param('id') id: string,
@@ -84,6 +86,7 @@ export class OrdersController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete order by ID' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Order not found' })
   @ApiResponse({ status: HttpStatus.OK, type: OrderResponseDto })
   async remove(
     @Param('id') id: string,
