@@ -1,10 +1,9 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="" target="blank"><img src="https://pixhive.s3.us-east-2.amazonaws.com/images/live-chat.png" width="120" alt="Nest Logo" /></a>
 </p>
 
-<p align="center">🧾</p>
 
-  <p align="center">A Chat and Order Management API management system</p>
+  <p align="center">A Chat based Order Management API</p>
 
 ---
 
@@ -69,7 +68,7 @@ If you find it difficult accessing the socket chat sessions, I have provided an 
 
 ### Screenshot of HTML file:
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="http://nestjs.com/" target="blank"><img src="https://pixhive.s3.us-east-2.amazonaws.com/images/Screenshot%202024-12-31%20202151.png" width=auto alt="Scrennshot of web page" /></a>
 </p>
 
 > ### Run the Make commands below to run test:
