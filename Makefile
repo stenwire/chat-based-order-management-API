@@ -2,8 +2,13 @@
 
 compose_service = api
 
+PARAMS =
+
 install:
 	docker-compose exec ${compose_service} npm install
+
+uninstall:
+	docker-compose exec ${compose_service} npm uninstall ${PARAMS}
 
 build:
 	npm run build
@@ -23,6 +28,9 @@ docker-build:
 docker-up:
 	docker-compose up
 
+init-docker-up:
+	docker-compose up -d
+
 docker-down:
 	docker-compose down
 
@@ -35,7 +43,7 @@ prisma-generate:
 prisma-migrate-init:
 	docker-compose exec ${compose_service} npx prisma migrate dev --name "init"
 
-setup: install docker-build docker-up prisma-migrate-init
+setup: install docker-build init-docker-up prisma-migrate-init
 
 # Development startup
 dev-docker:
