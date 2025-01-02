@@ -22,7 +22,10 @@ $ git clone <repo_link>
 $ cd into directory
 ```
 ```bash
-$ copy the content of `.env.example` to a new file `.env`
+$ create an `.env` file and copy the content of `.env.example` to the file.
+```
+```bash
+$ update the content of the new `.env` as needed.
 ```
 
 ### How to start the app with Docker(recommended):
