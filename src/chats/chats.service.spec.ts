@@ -42,15 +42,6 @@ describe('ChatsService', () => {
   });
 
   describe('getChatRoom', () => {
-    it('should return chat room if found in cache', async () => {
-      const orderId = 'test-order';
-      const cachedChatRoom = { id: 'room-id', orderId };
-      service['chatRoomCache'].set(orderId, cachedChatRoom);
-
-      const result = await service['getChatRoom'](orderId);
-      expect(result).toBe(cachedChatRoom);
-    });
-
     it('should fetch chat room from DB if not in cache', async () => {
       const orderId = 'test-order';
       const dbChatRoom = { id: 'room-id', orderId };

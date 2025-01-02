@@ -8,8 +8,10 @@ import {
   NotFoundException,
   BadRequestException,
   HttpStatus,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ChatRoomsService } from './chatrooms.service';
+import { OrdersService } from '../orders/orders.service';
 import { UpdateChatRoomDto } from './dto/update-chatroom.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -29,7 +31,11 @@ import { ChatRoomResponseDto } from './dto/chatrooms-response.dto'; // A DTO for
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class ChatRoomsController {
-  constructor(private readonly chatRoomsService: ChatRoomsService) {}
+  constructor(
+    private readonly chatRoomsService: ChatRoomsService,
+    private readonly orderService: OrdersService,
+  ) {}
+  // constructor(private readonly orderService: OrdersService) {}
 
   @Get()
   @ApiOperation({ summary: 'Fetch all rooms (ADMIN only)' })
@@ -110,7 +116,20 @@ export class ChatRoomsController {
     status: HttpStatus.NOT_FOUND,
     description: 'Chat room not found',
   })
-  async findByOrderId(@Param('orderId') orderId: string) {
+  async findByOrderId(
+    @Param('orderId') orderId: string,
+    @GetCurrentUser() user: { id: string; role: UserRole },
+  ) {
+    const isHaveAccess = await this.orderService.findOne(
+      orderId,
+      user.id,
+      user.role,
+    );
+
+    if (!isHaveAccess) {
+      throw new ForbiddenException('You do not have access to this order');
+    }
+
     const chatRoom = await this.chatRoomsService.findByOrderId(orderId);
     if (!chatRoom) {
       throw new NotFoundException(`Chat room for order ${orderId} not found`);

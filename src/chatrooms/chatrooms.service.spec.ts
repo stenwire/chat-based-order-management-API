@@ -3,6 +3,7 @@ import { ChatRoomsService } from './chatrooms.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BadRequestException } from '@nestjs/common';
 import { ChatRoomStatus, UserRole } from '@prisma/client';
+import { OrdersModule } from '../orders/orders.module';
 
 describe('ChatroomsService', () => {
   let service: ChatRoomsService;
@@ -52,6 +53,7 @@ describe('ChatroomsService', () => {
           useValue: mockPrismaService,
         },
       ],
+      imports: [OrdersModule],
     }).compile();
 
     service = module.get<ChatRoomsService>(ChatRoomsService);

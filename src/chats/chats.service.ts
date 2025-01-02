@@ -8,16 +8,9 @@ import { ChatRoomStatus, UserRole } from '@prisma/client';
 
 @Injectable()
 export class ChatsService {
-  // I decided to cache this to reduce DB hits
-  private chatRoomCache = new Map<string, any>(); // Cache chatRoom by orderId
-
   constructor(private readonly prisma: PrismaService) {}
 
   private async getChatRoom(orderId: string) {
-    if (this.chatRoomCache.has(orderId)) {
-      return this.chatRoomCache.get(orderId);
-    }
-
     const chatRoom = await this.prisma.chatRoom.findFirst({
       where: {
         orderId: orderId,
@@ -31,7 +24,6 @@ export class ChatsService {
       throw new NotFoundException('Chat room not found');
     }
 
-    this.chatRoomCache.set(orderId, chatRoom);
     return chatRoom;
   }
 
