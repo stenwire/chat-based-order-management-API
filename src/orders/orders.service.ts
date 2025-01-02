@@ -7,16 +7,21 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderStatus, UserRole, ChatRoomStatus } from '@prisma/client';
+import { FindOrderDto } from './dto/find-order-dto';
+import { OrderResponseDto } from './dto/order-response.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(userId: string, createOrderDto: CreateOrderDto) {
+  async create(
+    userId: string,
+    createOrderDto: CreateOrderDto,
+  ): Promise<CreateOrderDto> {
     // Create the order and its associated chat room in a transaction
     return this.prisma.$transaction(async (prisma) => {
       // Create the order
-      const order = await prisma.order.create({
+      const order: CreateOrderDto = await prisma.order.create({
         data: {
           ...createOrderDto,
           userId,
@@ -47,7 +52,7 @@ export class OrdersService {
     });
   }
 
-  async findAll(userId: string, userRole: UserRole) {
+  async findAll(userId: string, userRole: UserRole): Promise<FindOrderDto[]> {
     const where = userRole === UserRole.ADMIN ? {} : { userId };
 
     return this.prisma.order.findMany({
@@ -65,7 +70,11 @@ export class OrdersService {
     });
   }
 
-  async findOne(id: string, userId: string, userRole: UserRole) {
+  async findOne(
+    id: string,
+    userId: string,
+    userRole: UserRole,
+  ): Promise<FindOrderDto> {
     const order = await this.prisma.order.findUnique({
       where: { id },
       include: {
@@ -89,7 +98,7 @@ export class OrdersService {
       throw new ForbiddenException('You do not have access to this order');
     }
 
-    return order;
+    return order as FindOrderDto;
   }
 
   async update(
@@ -97,7 +106,7 @@ export class OrdersService {
     updateOrderDto: UpdateOrderDto,
     userId: string,
     userRole: UserRole,
-  ) {
+  ): Promise<UpdateOrderDto> {
     // First check if order exists and user has access
     await this.findOne(id, userId, userRole);
 
@@ -109,10 +118,14 @@ export class OrdersService {
     return this.prisma.order.update({
       where: { id },
       data: updateOrderDto,
-    });
+    }) as UpdateOrderDto;
   }
 
-  async updateStatus(id: string, status: OrderStatus, userId: string) {
+  async updateStatus(
+    id: string,
+    status: OrderStatus,
+    userId: string,
+  ): Promise<UpdateOrderDto> {
     const order = await this.prisma.order.findUnique({
       where: { id },
       include: { chatRoom: true },
@@ -124,18 +137,18 @@ export class OrdersService {
 
     // Validate status transition
     if (
-      status !== OrderStatus.PROCESSING ||
+      order.status !== OrderStatus.PROCESSING ||
       order.chatRoom?.status !== ChatRoomStatus.CLOSED
     ) {
       throw new ForbiddenException(
-        'Chat must be closed before moving to COMPLETED',
+        `Chat must be CLOSED before moving to COMPLETED`,
       );
     }
 
     return this.prisma.order.update({
       where: { id },
       data: { status: OrderStatus.COMPLETED },
-    });
+    }) as UpdateOrderDto;
   }
 
   async remove(id: string, userId: string, userRole: UserRole) {

@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { OrderStatus } from '@prisma/client';
+import { JsonValue } from 'type-fest';
 
 export class CreateOrderDto {
   @ApiProperty({ description: 'Order description' })
@@ -17,7 +18,7 @@ export class CreateOrderDto {
 
   @ApiProperty({ description: 'Order specifications' })
   @IsObject()
-  specifications: Record<string, any>;
+  specifications: JsonValue;
 
   @ApiProperty({ description: 'Order quantity', minimum: 1 })
   @IsInt()
@@ -28,9 +29,12 @@ export class CreateOrderDto {
   @ApiPropertyOptional({ description: 'Additional metadata' })
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+  metadata?: JsonValue;
 
   @ApiProperty({ enum: OrderStatus })
   @IsOptional()
   status?: OrderStatus;
+
+  @IsOptional()
+  id?: string;
 }

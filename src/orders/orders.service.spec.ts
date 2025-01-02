@@ -191,25 +191,25 @@ describe('OrdersService', () => {
     const orderId = 'order-123';
     const userId = 'admin-123';
 
-    it('should update status to PROCESSING when chat is closed', async () => {
+    it('should update status to COMPLETED when chat is closed', async () => {
       const mockOrder = {
         id: orderId,
-        status: OrderStatus.REVIEW,
+        status: OrderStatus.PROCESSING,
         chatRoom: { status: ChatRoomStatus.CLOSED },
       };
       mockPrismaService.order.findUnique.mockResolvedValue(mockOrder);
       mockPrismaService.order.update.mockResolvedValue({
         ...mockOrder,
-        status: OrderStatus.PROCESSING,
+        status: OrderStatus.COMPLETED,
       });
 
       const result = await service.updateStatus(
         orderId,
-        OrderStatus.PROCESSING,
+        OrderStatus.COMPLETED,
         userId,
       );
 
-      expect(result.status).toBe(OrderStatus.PROCESSING);
+      expect(result.status).toBe(OrderStatus.COMPLETED);
     });
 
     it('should throw ForbiddenException when updating to PROCESSING with open chat', async () => {
