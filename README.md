@@ -32,13 +32,17 @@ $ update the content of the new `.env` as needed.
 
 > #### Run the Make command below to build docker container and setup project:
 ```bash
-$ make setup
+$ make docker-build
+```
+```bash
+$ make install
 ```
 ```bash
 $ make docker-up
 ```
 ### How to start the app the native style(not recommended):
-> #### Create a Postgres DB and update the Database URL in the ev file
+> #### Create a Postgres DB and update the Database URL in the env file
+> Or check how to easily setup SQLite DB here: [click here](https://docs.nestjs.com/recipes/prisma)
 ```bash
 $ npm install
 ```
