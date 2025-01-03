@@ -43,7 +43,7 @@ prisma-generate:
 prisma-migrate-init:
 	docker-compose exec ${compose_service} npx prisma migrate dev --name "init"
 
-setup: install docker-build init-docker-up prisma-migrate-init
+setup: docker-build init-docker-up prisma-migrate-init
 
 # Development startup
 dev-docker:
